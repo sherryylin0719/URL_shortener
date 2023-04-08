@@ -10,4 +10,4 @@ const urlSchema = new Schema({
     required: true
   }
 })
-module.exports = mongoose.model('Url', urlSchema)
+module.exports = mongoose.model('RecordedURL', urlSchema)
