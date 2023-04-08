@@ -30,6 +30,10 @@ app.get('/', (req, res) => {
   res.render('index')
 })
 
+app.post('/show', (req, res) => {
+  res.render('show')
+})
+
 // 設定 port 3000
 app.listen(3000, () => {
   console.log('App is running on http://localhost:3000')
