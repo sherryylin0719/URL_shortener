@@ -1,4 +1,7 @@
 <form action="/show" method="POST">
   <input type="text" placeholder="input URL here" name="original_URL">
   <button class="btn" type="submit">Shorten</button>
+  {{#if error}}
+    <div class="error">{{ error }}</div>
+  {{/if}}
 </form>

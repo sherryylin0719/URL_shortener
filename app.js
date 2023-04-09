@@ -37,18 +37,29 @@ app.get('/', (req, res) => {
 
 app.post('/show', (req, res) => {
   const original_URL = req.body.original_URL
-  const short_URL = shortenURL()
-
-  RecordedURL.create({ original_URL, short_URL })
-    .then((recordedURL) => {
-      const id = recordedURL._id;
-      return RecordedURL.findById(id)
-       .lean()
-       .then(url => res.render('show', { url }))
-       .catch(error => console.log(error))
-    })
- }
+  if (original_URL.trim() === '') {
+    return res.render('index', { error: 'Please enter valid URL' }) //若使用者沒有輸入內容，就按下了送出鈕，需要防止表單送出並提示使用者
+  } else {
+    RecordedURL.findOne({ original_URL: original_URL }).lean()
+      .then((url) => {
+        if (url) { //輸入相同網址時，產生一樣的縮址。
+        return res.render('show', { url })
+      } else {
+        const short_URL = shortenURL()
+        RecordedURL.create({ original_URL, short_URL })
+          .then((recordedURL) => {
+            const id = recordedURL._id;
+            return RecordedURL.findById(id)
+          .lean()
+          .then(url => res.render('show', { url }))
+          })
+        }
+      })
+      .catch(error => console.log(error))
+    }
+  }
 )
+
 
 app.get('/:id', (req, res) => {
   const id = req.params.id
