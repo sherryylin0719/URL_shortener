@@ -3,8 +3,9 @@ const express = require('express')
 const mongoose = require('mongoose') // 載入 mongoose
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser') // 引用 body-parser
-const RecordedURL = require("./models/recordedURL")
-const shortenURL = require("./shortenURL")
+
+// 引用路由器
+const routes = require('./routes')
 // 加入這段 code, 僅在非正式環境時, 使用 dotenv
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -30,43 +31,8 @@ app.set('view engine', 'hbs')
 // 用 app.use 規定每一筆請求都需要透過 body-parser 進行前置處理
 app.use(bodyParser.urlencoded({ extended: true }))
 
-// 設定首頁路由
-app.get('/', (req, res) => {
-  res.render('index')
-})
-
-app.post('/show', (req, res) => {
-  const original_URL = req.body.original_URL
-  if (original_URL.trim() === '') {
-    return res.render('index', { error: 'Please enter valid URL' }) //若使用者沒有輸入內容，就按下了送出鈕，需要防止表單送出並提示使用者
-  } else {
-    RecordedURL.findOne({ original_URL: original_URL }).lean()
-      .then((url) => {
-        if (url) { //輸入相同網址時，產生一樣的縮址。
-        return res.render('show', { url })
-      } else {
-        const short_URL = shortenURL()
-        RecordedURL.create({ original_URL, short_URL })
-          .then((recordedURL) => {
-            const id = recordedURL._id;
-            return RecordedURL.findById(id)
-          .lean()
-          .then(url => res.render('show', { url }))
-          })
-        }
-      })
-      .catch(error => console.log(error))
-    }
-  }
-)
-
-
-app.get('/:id', (req, res) => {
-  const id = req.params.id
-  RecordedURL.findOne({short_URL: `localhost:3000/${id}`})
-  .lean()
-  .then(url => res.redirect(url.original_URL))
-})
+// 將 request 導入路由器
+app.use(routes)
 
 // 設定 port 3000
 app.listen(3000, () => {
