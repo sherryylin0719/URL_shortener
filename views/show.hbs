@@ -1,3 +1,18 @@
+<script>
+  function copyToClipboard() {
+  const copyText = document.querySelector("#myInput");
+  const textToCopy = copyText.getAttribute("data-value");
+  navigator.clipboard.writeText(textToCopy)
+    .then(() => {
+      alert("Copied the text: " + textToCopy);
+    })
+    .catch(err => {
+      console.error('Failed to copy text to clipboard', err);
+    });
+}
+</script>
+
 <h3>Success! Please use this link:<h3>
-<a href="{{url.original_URL}}" id="myInput">{{url.short_URL}}</a>
-<button onclick="copyToClipboard()" class="btn" type="submit">Copy</button>
+<a href="{{url.original_URL}}" id="myInput" data-value="{{url.short_URL}}"> {{url.short_URL}}
+</a>
+<button onclick="copyToClipboard()" class="btn">Copy</button>

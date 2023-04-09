@@ -4,7 +4,6 @@ const mongoose = require('mongoose') // 載入 mongoose
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser') // 引用 body-parser
 const RecordedURL = require("./models/recordedURL")
-const copyToClipboard = require("./copyToClipboard")
 const shortenURL = require("./shortenURL")
 // 加入這段 code, 僅在非正式環境時, 使用 dotenv
 if (process.env.NODE_ENV !== 'production') {
@@ -39,11 +38,23 @@ app.get('/', (req, res) => {
 app.post('/show', (req, res) => {
   const original_URL = req.body.original_URL
   const short_URL = shortenURL()
-  const id = req.params.id
+
   RecordedURL.create({ original_URL, short_URL })
-  return RecordedURL.findById(id)
+    .then((recordedURL) => {
+      const id = recordedURL._id;
+      return RecordedURL.findById(id)
+       .lean()
+       .then(url => res.render('show', { url }))
+       .catch(error => console.log(error))
+    })
+ }
+)
+
+app.get('/:id', (req, res) => {
+  const id = req.params.id
+  RecordedURL.findOne({short_URL: `localhost:3000/${id}`})
   .lean()
-  .then(url => res.render('show', { url }))
+  .then(url => res.redirect(url.original_URL))
 })
 
 // 設定 port 3000
