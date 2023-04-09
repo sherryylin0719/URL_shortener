@@ -11,9 +11,11 @@
     });
 }
 </script>
-
-<h3>Success! Please use this link:<h3>
-<a href="{{url.original_URL}}" id="myInput" data-value="{{url.short_URL}}"> {{url.short_URL}}
-</a>
-<button onclick="copyToClipboard()" class="btn">Copy</button>
-
+<div class="col text-center">
+  <h3>Success! Please use this link:<h3>
+  <div>
+    <a href="{{url.original_URL}}" id="myInput" data-value="{{url.short_URL}}"> {{url.short_URL}}
+    </a>
+  </div>
+  <button onclick="copyToClipboard()" class="btn btn-primary my-3">Copy</button>
+</div>
