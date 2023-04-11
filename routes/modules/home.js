@@ -21,12 +21,7 @@ router.post('/show', (req, res) => {
       } else {
         const short_URL = shortenURL()
         RecordedURL.create({ original_URL, short_URL })
-          .then((recordedURL) => {
-            const id = recordedURL._id;
-            return RecordedURL.findById(id)
-          .lean()
-          .then(url => res.render('show', { url }))
-          })
+          .then(recordedURL => res.render('show', { url: recordedURL}))
         }
       })
       .catch(error => console.log(error))
